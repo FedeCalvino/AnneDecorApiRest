@@ -38,6 +38,9 @@ public class VentasConexion implements IConexion<Venta> {
 
     private static final String SQL_SELECT_ALL_Dto_by_Estado = "select C.NOMBRE,C.ID,v.ID_VENTA,v.FECHA,v.PRECIO,ev.ARMADO,ev.FACTURADO,ev.INSTALADO,ev.PAGADO,v.OBRA from VENTA v join CLIENTES c on c.ID=v.CLIENTE_ID join ESTADO_VENTA ev on ev.ID=V.ESTADO_VENTA_ID order by ARMADO asc,INSTALADO asc,PAGADO asc, FACTURADO asc";
     private static final String SQL_SELECT_ALL_Dto_by_Fecha = "select C.NOMBRE,C.ID,v.ID_VENTA,v.FECHA,v.PRECIO,ev.ARMADO,ev.FACTURADO,ev.INSTALADO,ev.PAGADO,v.OBRA from VENTA v join CLIENTES c on c.ID=v.CLIENTE_ID join ESTADO_VENTA ev on ev.ID=V.ESTADO_VENTA_ID order by v.FECHA desc";
+    private static final String SQL_SELECT_NEXT_Dto_by_Fecha = "select C.NOMBRE,C.ID,v.ID_VENTA,v.FECHA,v.PRECIO,ev.ARMADO,ev.FACTURADO,ev.INSTALADO,ev.PAGADO,v.OBRA,I.DIA from VENTA v JOIN INSTALACION I on I.[ID_VENTA]=v.[ID_VENTA] join CLIENTES c on c.ID=v.CLIENTE_ID join ESTADO_VENTA ev on ev.ID=V.ESTADO_VENTA_ID WHERE\n" +
+            "I.DIA >= CAST(GETDATE() AS DATE) \n" +
+            "AND I.DIA < DATEADD(DAY, 3, CAST(GETDATE() AS DATE))  order by v.FECHA desc";
     private static final String SQL_BY_ID = "SELECT * FROM VENTA WHERE ID_VENTA = ?";
     private static final String SQL_SELECT_ALL="SELECT * FROM VENTA";
     private static final String SQL_INSERT = "INSERT INTO VENTA(CLIENTE_ID,ESTADO_VENTA_ID,FECHA,PRECIO,OBRA) VALUES(?,?,?,?,?)";
@@ -281,6 +284,40 @@ public class VentasConexion implements IConexion<Venta> {
                 connection.close();
             }catch(Exception e){
             e.printStackTrace();
+            }
+        }
+        return Dtoventas;
+    }
+
+    public List<DtoVenta> findNextDto() {
+        List<DtoVenta> Dtoventas=new ArrayList<>();
+        java.sql.Connection connection = null;
+        try{
+            connection = (java.sql.Connection) Conexion.GetConexion();
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_NEXT_Dto_by_Fecha);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                DtoVenta dtoV = new DtoVenta();
+                dtoV.setNombreCliente(rs.getString(1));
+                dtoV.setIdCliente(rs.getInt(2));
+                dtoV.setIdVenata(rs.getInt(3));
+                dtoV.setFechaVenta(rs.getDate(4));
+                dtoV.setMonto(rs.getInt(5));
+                dtoV.setObra(rs.getString(10));
+                ObjEstadoColor Ec = GetEstadoColorVenta(rs.getByte(6),rs.getByte(7),rs.getByte(8),rs.getByte(9));
+                dtoV.setEstadoActual(rs.getString(10));
+                dtoV.setDiaInstalacion(rs.getDate(11));
+                dtoV.setEstadoActual(Ec.getEstadoAct());
+                dtoV.setColorEstado(Ec.getColor());
+                Dtoventas.add(dtoV);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+                connection.close();
+            }catch(Exception e){
+                e.printStackTrace();
             }
         }
         return Dtoventas;

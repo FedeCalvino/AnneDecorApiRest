@@ -1,11 +1,11 @@
 package com.example.sistemaannedecor2.Dto;
 
-import com.example.sistemaannedecor2.Clases.Cortina;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DtoInstalacion {
+    Date Dia;
     private int IDInstalacion;
     private int IdVenta;
     String Start;
@@ -18,7 +18,8 @@ public class DtoInstalacion {
     List<DtoVentacortina> cortinas;
 
 
-    public DtoInstalacion(int idVenta, String start, String end, String aclaraciones, String titulo) {
+    public DtoInstalacion(int idVenta, String start, String end, String aclaraciones, String titulo,Date dia) {
+        this.Dia=dia;
         IdVenta = idVenta;
         Start = start;
         End = end;
@@ -27,6 +28,17 @@ public class DtoInstalacion {
         cortinas=new ArrayList<>();
 
     }
+
+
+
+    public Date getDia() {
+        return Dia;
+    }
+
+    public void setDia(Date dia) {
+        Dia = dia;
+    }
+
     public void AddCortina(DtoVentacortina c){
         cortinas.add(c);
     }

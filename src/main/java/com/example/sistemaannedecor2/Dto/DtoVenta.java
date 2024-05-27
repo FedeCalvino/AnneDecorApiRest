@@ -11,10 +11,15 @@ public class DtoVenta {
     public int Monto;
     public String EstadoActual;
     public String ColorEstado;
-
+    public Date DiaInstalacion;
     public DtoVenta() {
     }
 
+
+
+    public void setDiaInstalacion(Date diaInstalacion) {
+        DiaInstalacion = diaInstalacion;
+    }
     public void setObra(String obra) {
         Obra = obra;
     }

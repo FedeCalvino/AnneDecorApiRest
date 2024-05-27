@@ -11,17 +11,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class InstalacionConexion implements IConexion<DtoInstalacion> {
 
     private static final String SQL_DELETE = "DELETE FROM INSTALACION WHERE ID_INSTALACION = ?";
-    private static final String SQL_INSERT_INSTALACION = "INSERT INTO INSTALACION(ID_VENTA,COMIENZO,FINAL,ACLARACIONES,TITULO) VALUES (?,?,?,?,?)";
-    private static final String SQL_GET_INSTALACION = "select I. ID_INSTALACION,v. ID_VENTA,I. COMIENZO,I. FINAL,I. ACLARACIONES,I. TITULO,c. DIRECCION,c. TELEFONO,v. OBRA,cor. ALTO,cor. ANCHO,cor.[AMBIENTE] ,cor. MOTORIZADA,cor.TIPO_TELA_ID, tp.NOMBRE,tp.COLOR,r.CANO,r.LARGO_CADENA,cor. ID_CORTINA,r. POSICION,r. LADO_CADENA from venta v join CLIENTES c on c. ID=v. CLIENTE_ID join VENTA_CORTINA vc on vc. VENTA_ID=v. ID_VENTA join CORTINAS cor on cor.[ID_CORTINA]=vc. CORTINA_ID join ROLLER r on r.ID_CORTINA=cor.[ID_CORTINA] join TIPO_TELA tp on tp. ID=cor. TIPO_TELA_ID join INSTALACION I on I.[ID_VENTA]=V. ID_VENTA order by I.ID_INSTALACION";
+    private static final String SQL_INSERT_INSTALACION = "INSERT INTO INSTALACION(ID_VENTA,COMIENZO,FINAL,ACLARACIONES,TITULO,DIA) VALUES (?,?,?,?,?,?)";
+    private static final String SQL_GET_INSTALACION = "select I. ID_INSTALACION,v. ID_VENTA,I. COMIENZO,I. FINAL,I. ACLARACIONES,I. TITULO,c. DIRECCION,c. TELEFONO,v. OBRA,cor. ALTO,cor. ANCHO,cor.[AMBIENTE] ,cor. MOTORIZADA,cor.TIPO_TELA_ID, tp.NOMBRE,tp.COLOR,r.CANO,r.LARGO_CADENA,cor. ID_CORTINA,r. POSICION,r. LADO_CADENA,I.DIA from venta v join CLIENTES c on c. ID=v. CLIENTE_ID join VENTA_CORTINA vc on vc. VENTA_ID=v. ID_VENTA join CORTINAS cor on cor.[ID_CORTINA]=vc. CORTINA_ID join ROLLER r on r.ID_CORTINA=cor.[ID_CORTINA] join TIPO_TELA tp on tp. ID=cor. TIPO_TELA_ID join INSTALACION I on I.[ID_VENTA]=V. ID_VENTA order by I.ID_INSTALACION";
     @Override
     public DtoInstalacion save(DtoInstalacion dtoInstalacion) {
         java.sql.Connection conexion=null;
+
         try{
+            java.sql.Date sqlDate = new java.sql.Date(dtoInstalacion.getDia().getTime());
+
+            //le agrego 1 dia
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.setTime(sqlDate);
+            calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
+            java.sql.Date sqlDateMas1Dia = new java.sql.Date(calendar.getTimeInMillis());
+
             conexion = (java.sql.Connection) Conexion.GetConexion();
             PreparedStatement ps = conexion.prepareStatement(SQL_INSERT_INSTALACION, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1,dtoInstalacion.getIdVenta());
@@ -29,6 +39,7 @@ public class InstalacionConexion implements IConexion<DtoInstalacion> {
             ps.setString(3,dtoInstalacion.getEnd());
             ps.setString(4,dtoInstalacion.getAclaraciones());
             ps.setString(5,dtoInstalacion.getTitulo());
+            ps.setDate(6,sqlDateMas1Dia);
             ps.execute();
             ResultSet rs = ps.getGeneratedKeys();
             while(rs.next()){
@@ -94,7 +105,7 @@ public class InstalacionConexion implements IConexion<DtoInstalacion> {
                     if (DI != null) {
                         DtoIList.add(DI);
                     }
-                    DI = new DtoInstalacion(rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
+                    DI = new DtoInstalacion(rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),rs.getDate(22));
                     IdInstalacionAnterior = IdInstalacion;
                     DI.setIDInstalacion(IdInstalacion);
                     DI.setDireccion(rs.getString(7));

@@ -63,6 +63,10 @@ public class VentaController {
         System.out.println("Entro");
         return ventaService.findAllDtoVC(IdVenta);
     }
+    @GetMapping("/DtoVentaCor/Next")
+    public List<DtoVenta> findNextVentaDto(){
+        return ventaService.findNextDto();
+    }
 
     }
 

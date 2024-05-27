@@ -47,4 +47,8 @@ public class VentaService {
     public List<DtoVenta> findAllDtoLike(String nombreCli) {
         return VentasConexion.findAllDtoLike(nombreCli);
     }
+
+    public List<DtoVenta> findNextDto() {
+        return VentasConexion.findNextDto();
+    }
 }

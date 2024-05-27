@@ -9,16 +9,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins="http://localhost:5174")
 @RestController
 @RequestMapping("/Usuario")
 public class UsuarioController {
     private UsuarioService UService;
-
     public UsuarioController(UsuarioService cs) {
         this.UService = cs;
     }
-
+    @CrossOrigin(origins="https://localhost:5174")
     @GetMapping("/{Mail}/{Pass}")
     public DtoUsuario BuscarUsuario(@PathVariable String Mail,@PathVariable String Pass){
         DtoUsuario dt = new DtoUsuario(Mail,Pass);

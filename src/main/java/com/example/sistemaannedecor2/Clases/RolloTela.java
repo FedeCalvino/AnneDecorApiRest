@@ -5,6 +5,7 @@ package com.example.sistemaannedecor2.Clases;
 public class RolloTela {
     int codigo;
     double largo;
+    int tipoTelaId;
     TipoTela tipo;
     double Ancho;
     
