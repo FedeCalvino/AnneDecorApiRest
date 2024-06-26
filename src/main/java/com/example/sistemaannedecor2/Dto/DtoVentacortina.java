@@ -107,7 +107,7 @@ public class DtoVentacortina {
     public void setAnchoCortina(String anchoAFAF) {
         AnchoAfuerAfuera = anchoAFAF;
         Double anchoCortina = Double.parseDouble(anchoAFAF)-0.035;
-        Double anchoCano = Double.parseDouble(anchoAFAF)+0.030;
+        Double anchoCano = Double.parseDouble(anchoAFAF)-0.030;
         DecimalFormat df = new DecimalFormat("#.####"); // Formato sin ceros adicionales en la parte decimal
         this.AnchoCortina = df.format(anchoCortina);
         this.AnchoCaño = df.format(anchoCano);
